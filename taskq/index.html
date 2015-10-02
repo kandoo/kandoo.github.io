@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskQ</title>
+  <meta name="description" content="An effort to simplify distributed programming.">
+	<meta name="keywords" context="distributed systems,openflow,SDN,go,golang">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://kandoo.github.io/taskq/">
+  <link rel="alternate" type="application/rss+xml" title="Kandoo" href="http://kandoo.github.io/feed.xml" />
+
+	<link rel="stylesheet" href="/css/gh-fork-ribbon.css" />
+	<!--[if lt IE 9]>
+		<link rel="stylesheet" href="/css/gh-fork-ribbon.ie.css" />
+	<![endif]-->
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Kandoo</a>
+		
+			<a class="site-github-icon" href="https://github.com/kandoo">
+				<span class="icon  icon--github">
+					<svg viewBox="0 0 16 16">
+						<path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+					</svg>
+				</span>
+			</a>
+		
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/beehive/">Beehive</a>
+          
+        
+          
+          <a class="page-link" href="/netctrl/">Network Controller</a>
+          
+        
+          
+          <a class="page-link" href="/taskq/">TaskQ</a>
+          
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">TaskQ</h1>
+  </header>
+
+  <article class="post-content">
+    <p>TaskQ is a simple distributed task queue using which you can:</p>
+
+<ul>
+<li>enqueue a task into a named queue.</li>
+<li>dequeue a task from a named queue.</li>
+<li>acknowledge a task in a named queue.</li>
+</ul>
+
+<p>Tasks are either in &quot;active&quot; or &quot;dequeued&quot; state. TaskQ dequeue tasks
+from the list of active tasks, return them to the user, and put them in
+the dequeued list. If a dequeued task is not acknowledged after a
+timetout (2-3 min), the task will be put back  in the active queue.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p><strong>Option 1.</strong> Install TaskQ using <a href="https://github.com/soheilhy/goget">goget</a>:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">curl -sL https://git.io/goget <span class="p">|</span> bash -s -- github.com/kandoo/beehive/examples/taskq
+</code></pre></div>
+<p><strong>Option 2.</strong> Install Go 1.4+ on your machine, setup your Go workspace
+(i.e., the <code>$GOPATH</code>), and go get TaskQ:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">go get github.com/kandoo/beehive/examples/taskq
+</code></pre></div>
+<h2 id="standalone-mode">Standalone Mode</h2>
+
+<p>To run TaskQ in standalone mode with no replication, run the following command:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">taskq -logtostderr -taskq.repl<span class="o">=</span>1
+</code></pre></div>
+<p>This command runs a TaskQ server with a <em>replication factor</em> of 1, which
+basically means saving data on the local machine with no replication on any
+other nodes. You can send requests to TaskQ either using HTTP or its own
+text-based protocol. By default, HTTP is served on localhost:7677, TaskQ
+protocol is served on port 7979, and TaskQ&#39;s data is saved in <code>/tmp/beehive</code>.
+You can override these addresses using <code>-addr</code>, <code>-taskq.addr</code>, and <code>-statepath</code>:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">taskq -logtostderr -addr<span class="o">=</span>ADDR -taskq.addr<span class="o">=</span>TADDR -statepath<span class="o">=</span>DIR -taskq.repl<span class="o">=</span>1
+</code></pre></div>
+<h2 id="clustered-mode">Clustered Mode</h2>
+
+<h3 id="run-the-first-node">Run the first node</h3>
+
+<p>Each TaskQ server has two listening ports. One used for its HTTP API and also
+for Beehive&#39;s RPC. The other one is used for TaskQ&#39;s text-based protocol. The
+former is set using <code>-addr</code> and the later is set using <code>-taskq.addr</code>.</p>
+
+<p>You can run the first node using:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">taskq -logtostderr -addr ADDR1 -taskq.addr TADDR1 -statepath DIR1
+</code></pre></div>
+<p><code>ADDR1</code> and <code>TADDR1</code> are the listening addresses of the first node in the form
+of <code>IP:PORT</code>. <code>STATE1</code> is the directory where the first node stores its state.</p>
+
+<h3 id="add-a-new-nodes-to-the-cluster">Add a new nodes to the cluster</h3>
+
+<p>You can add new nodes to the cluster using:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">taskq -logtostderr -addr ADDRN -paddrs ADDR1 -taskq.addr TADDRN -statepath DIRN
+</code></pre></div>
+<p><code>ADDRN</code> and <code>TADDRN</code> are the listening addresses of the new node in the form
+of <code>IP:PORT</code>. <code>ADDR1</code> is the address of the first node. You can also use the
+address of any other live nodes instead of <code>ADDR1</code>.
+<code>DIRN</code> is the directory where the N&#39;th node stores its state.</p>
+
+<h2 id="api">API</h2>
+
+<p>TaskQ has two endpoints: (i) HTTP and (ii) its own text-based protocol. They
+support the same set of functionalities, but HTTP is easier to use while
+TaskQ protocol is more efficient.</p>
+
+<h2 id="http-api">HTTP API</h2>
+
+<p>TaskQ handles HTTP requests in the following format:</p>
+
+<table><thead>
+<tr>
+<th>URL</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>/apps/taskq/QUEUE/tasks</code></td>
+<td><code>POST</code></td>
+<td>Enqueue a task in QUEUE. Task body is submitted as POST data.</td>
+</tr>
+<tr>
+<td><code>/apps/taskq/QUEUE/tasks/deque</code></td>
+<td><code>POST</code></td>
+<td>Dequeue a task from QUEUE. It returns the JSON representation of the dequeued task.</td>
+</tr>
+<tr>
+<td><code>/apps/taskq/QUEUE/tasks/ID</code></td>
+<td><code>DELETE</code></td>
+<td>Acknowledge task ID in QUEUE</td>
+</tr>
+</tbody></table>
+
+<p>For example, you can enqueue a task in TaskQ using the following command:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl -X POST -d &quot;TASKBODY&quot; http://localhost:7677/apps/taskq/queue1/tasks
+</code></pre></div>
+<p>You can dequeue a task using the following command:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl -X POST http://localhost:7677/apps/taskq/queue1/tasks/deque
+</code></pre></div>
+<p>You can acknowlege a dequeued task using the following command:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl -X DELETE http://localhost:7677/apps/taskq/queue1/tasks/1
+</code></pre></div>
+<p><strong>NOTE:</strong> You can send HTTP requests to any TaskQ server in your cluster.
+TaskQ would remain consistent no matter where you initiate your request.</p>
+
+<h2 id="taskq-protocol">TaskQ Protocol</h2>
+
+<p>To avoid the overheads of HTTP, TaskQ also has a text-based protocol with the
+following requests:</p>
+
+<table><thead>
+<tr>
+<th>Request</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>RID enq QUEUE LEN BODY</code></td>
+<td>Enqueue a task in QUEUE. LEN is a length of BODY.<sup>+</sup></td>
+</tr>
+<tr>
+<td><code>RID deq QUEUE</code></td>
+<td>Dequeue a task from QUEUE</td>
+</tr>
+<tr>
+<td><code>RID ack QUEUE TASKID</code></td>
+<td>Acknowledge TASKID in QUEUE</td>
+</tr>
+</tbody></table>
+
+<p><sup>+</sup> If LEN is 0, the length of the task&#39;s body will be calculated
+automatically.</p>
+
+<p>RID is the request ID assigned by the client. This ID is returned along with
+the response to identify its respective request.</p>
+
+<p>TaskQ protocol has the following response format:</p>
+
+<table><thead>
+<tr>
+<th>Request</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>RID enqed QUEUE TASKID</code></td>
+<td>The task is successfully enqueued.</td>
+</tr>
+<tr>
+<td><code>RID deqed QUEUE TASKID LEN BODY</code></td>
+<td>A task is successfully dequeued.</td>
+</tr>
+<tr>
+<td><code>RID acked QUEUE TASKID</code></td>
+<td>The task is successfully acknowledged.</td>
+</tr>
+<tr>
+<td><code>RID error MSG</code></td>
+<td>There is a request error.</td>
+</tr>
+</tbody></table>
+
+<h2 id="go-client">Go Client</h2>
+
+<p>TaskQ has a Go client which is built based on the TaskQ text-based protocol.
+For more information, refer to
+<a href="http://godoc.org/github.com/kandoo/beehive/examples/taskq/client">its GoDoc</a>.</p>
+
+<h2 id="fault-tolerance">Fault-tolerance</h2>
+
+<p>TaskQ&#39;s replication factor (set via <code>-taskq.repl</code>) is the replication factor
+of one queue.  If you have <code>N</code> nodes in your cluster and a replication factor
+of <code>R</code> for TaskQ, the nodes that store the tasks of one single queue can be on
+any <code>R</code> nodes. Assuming that <code>R &lt;= N</code>, as long as the majority of nodes serving
+a queue (i.e., <code>0.5 x R + 1</code>) are up, TaskQ will serve requests to that queue.
+Note that, when <code>R &lt; N</code>, there will be nodes which does not participate as a
+replica for a given queue.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <div class="github-fork-ribbon-wrapper left-bottom">
+		<div class="github-fork-ribbon">
+				<a href="https://github.com/kandoo">Kandoo on GitHub</a>
+		</div>
+</div>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beehive</title>
+  <meta name="description" content="An effort to simplify distributed programming.">
+	<meta name="keywords" context="distributed systems,openflow,SDN,go,golang">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://kandoo.github.io/beehive/">
+  <link rel="alternate" type="application/rss+xml" title="Kandoo" href="http://kandoo.github.io/feed.xml" />
+
+	<link rel="stylesheet" href="/css/gh-fork-ribbon.css" />
+	<!--[if lt IE 9]>
+		<link rel="stylesheet" href="/css/gh-fork-ribbon.ie.css" />
+	<![endif]-->
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Kandoo</a>
+		
+			<a class="site-github-icon" href="https://github.com/kandoo">
+				<span class="icon  icon--github">
+					<svg viewBox="0 0 16 16">
+						<path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+					</svg>
+				</span>
+			</a>
+		
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/beehive/">Beehive</a>
+          
+        
+          
+          <a class="page-link" href="/netctrl/">Network Controller</a>
+          
+        
+          
+          <a class="page-link" href="/taskq/">TaskQ</a>
+          
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Beehive</h1>
+  </header>
+
+  <article class="post-content">
+    <p><a href="https://github.com/kandoo/beehive">Beehive</a> is a distributed programming
+framework that comes with built-in
+transactions, replication, fault-tolerance, runtime instrumentation, and
+optimized placement.</p>
+
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#hello-world">Hello World</a>
+
+<ul>
+<li><a href="#message">Message</a></li>
+<li><a href="#message-handler">Message Handler</a></li>
+<li><a href="#emit-hello">Emit Hello</a></li>
+<li><a href="#start">Start</a></li>
+<li><a href="#run-a-cluster">Run a Cluster</a></li>
+</ul></li>
+<li><a href="#deep-dive">Deep Dive</a>
+
+<ul>
+<li><a href="#hives">Hives</a></li>
+<li><a href="#applications-dictionaries-and-message-handlers">Applications, Dictionaries, and Message Handlers</a></li>
+<li><a href="#map-and-consistent-concurrency">Map and Consistent Concurrency</a></li>
+<li><a href="#bees">Bees</a></li>
+<li><a href="#life-of-a-message">Life of a Message</a></li>
+<li><a href="#reply-messages">Reply Messages</a></li>
+<li><a href="#http-handlers">HTTP Handlers</a></li>
+<li><a href="#detached-handlers">Detached Handlers</a></li>
+<li><a href="#transactions">Transactions</a></li>
+<li><a href="#runtime-instrumentation-and-optimization">Runtime Instrumentation and Optimization</a></li>
+</ul></li>
+<li><a href="#projects-using-beehive">Projects using Beehive</a></li>
+<li><a href="#mailing-list">Mailing List</a></li>
+<li><a href="#publications">Publications</a></li>
+</ul>
+
+<h2 id="installation">Installation</h2>
+
+<p><strong>Option 1.</strong> Install Beehive using <a href="https://github.com/soheilhy/goget">goget</a>:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl -sL https://git.io/goget | bash -s -- github.com/kandoo/beehive
+</code></pre></div>
+<p><strong>Option 2.</strong> Install go 1.4+, set up your <code>GOPATH</code>, and install Beehive using
+<code>go get</code>:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">go get github.com/kandoo/beehive
+</code></pre></div>
+<p><strong>Test Your Setup.</strong> Enter Beehive&#39;s root directory
+(<code>$GOPATH/src/github.com/kandoo/beehive</code>) and run:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">go test -v
+</code></pre></div>
+<h2 id="hello-world">Hello World</h2>
+
+<p>Let&#39;s write a simple example that counts the number of times we have
+said hello to each person. You can find the complete example in the
+<a href="https://godoc.org/github.com/kandoo/beehive/#example-package">GoDoc</a>.</p>
+
+<h3 id="message">Message</h3>
+
+<p>Beehive is based on asynchronous message passing. Naturally, the first step is
+to define a <code>Hello</code> message:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// Hello represents a message in our hello world example.</span>
+<span class="kd">type</span> <span class="nx">Hello</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Name</span> <span class="kt">string</span> <span class="c1">// Name is the name of the person saying hello.</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="message-handler">Message Handler</h3>
+
+<p>To handle <code>Hello</code> messages, we need to write an application that
+has a message handler for <code>Hello</code>. Pretty analogous to HTTP handlers,
+except we are processing messages not HTTP requests.</p>
+
+<p>A message handler in Beehive consists of two functions: (i) <code>Rcv</code> and
+(ii) <code>Map</code>. <code>Rcv</code> is the function that actually processes a message.
+Since Beehive provides a generic runtime <code>Map</code> function that works for
+all applications, let&#39;s skip the <code>Map</code> function for now, and we will
+explain it in next section.</p>
+
+<p>This is a simple <code>Rcv</code> function that handles <code>Hello</code> messages (don&#39;t panic
+it&#39;s all comments ;) ):</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// Rcvf receives the message and the context.</span>
+<span class="kd">func</span> <span class="nx">Rcvf</span><span class="p">(</span><span class="nx">msg</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Msg</span><span class="p">,</span> <span class="nx">ctx</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">RcvContext</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="c1">// msg is an envelope around the Hello message.</span>
+    <span class="c1">// You can retrieve the Hello, using msg.Data() and then</span>
+    <span class="c1">// you need to assert that its a Hello.</span>
+    <span class="nx">hello</span> <span class="o">:=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">().(</span><span class="nx">Hello</span><span class="p">)</span>
+    <span class="c1">// Using ctx.Dict you can get (or create) a dictionary.</span>
+    <span class="nx">dict</span> <span class="o">:=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">Dict</span><span class="p">(</span><span class="s">&quot;hello_dict&quot;</span><span class="p">)</span>
+    <span class="c1">// Using Get(), you can get the value associated with</span>
+    <span class="c1">// a key in the dictionary. Keys are always string</span>
+    <span class="c1">// and values are generic interface{}&#39;s.</span>
+    <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">dict</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">hello</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+    <span class="c1">// If there is an error, the entry is not in the</span>
+    <span class="c1">// dictionary. Otherwise, we set cnt based on</span>
+    <span class="c1">// the value we already have in the dictionary</span>
+    <span class="c1">// for that name.</span>
+    <span class="nx">cnt</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">cnt</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">// Now we increment the count.</span>
+    <span class="nx">cnt</span><span class="o">++</span>
+    <span class="c1">// And then we print the hello message.</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;hello %s (%d)!\n&quot;</span><span class="p">,</span> <span class="nx">hello</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">cnt</span><span class="p">)</span>
+    <span class="c1">// Finally we update the count stored in the dictionary.</span>
+    <span class="k">return</span> <span class="nx">dict</span><span class="p">.</span><span class="nx">Put</span><span class="p">(</span><span class="nx">hello</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">cnt</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>To register a message handler, we first create an application and then we
+register the <code>Hello</code> handler for our application:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// Create the hello world application and make sure .</span>
+<span class="nx">app</span> <span class="o">:=</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">NewApp</span><span class="p">(</span><span class="s">&quot;hello-world&quot;</span><span class="p">,</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Persistent</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1">// Register the handler for Hello messages.</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="nx">Hello</span><span class="p">{},</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">RuntimeMap</span><span class="p">(</span><span class="nx">Rcvf</span><span class="p">),</span> <span class="nx">Rcvf</span><span class="p">)</span>
+</code></pre></div>
+<p>Note that our application is persistent and will save its state on 1 node
+(i.e., persistent but not replicated).</p>
+
+<h3 id="emit-hello">Emit Hello</h3>
+
+<p>Now, to send a <code>Hello</code> message, you can emit it:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// Emit simply emits a message, here a string of your name.</span>
+<span class="k">go</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Emit</span><span class="p">(</span><span class="nx">Hello</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;your name&quot;</span><span class="p">})</span>
+<span class="c1">// Emit another message with the same name to test the counting feature.</span>
+<span class="k">go</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Emit</span><span class="p">(</span><span class="nx">Hello</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;your name&quot;</span><span class="p">})</span>
+</code></pre></div>
+<p>Whenever you emit a <code>Hello</code> message, it will be processed by all applications
+that have a handler for <code>Hello</code>. Here, we have only one application, but
+you could create different applications with different handlers for <code>Hello</code>.
+All of them would receive the <code>Hello</code> message.</p>
+
+<h3 id="start">Start</h3>
+
+<p>Finally, we need to start Beehive:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="nx">beehive</span><span class="p">.</span><span class="nx">Start</span><span class="p">()</span>
+</code></pre></div>
+<p>When you run the application (say <code>go run helloworld.go</code>),
+you will have the following output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">bee 1/HelloWorld/0000000000000402&gt; hello your name (1)!
+bee 1/HelloWorld/0000000000000402&gt; hello your name (2)!
+</code></pre></div>
+<p>When you run the application one more time, you will see the
+following output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">bee 1/HelloWorld/0000000000000402&gt; hello your name (3)!
+bee 1/HelloWorld/0000000000000402&gt; hello your name (4)!
+</code></pre></div>
+<p>Note that the counter is saved on disk, so you can safely
+restart your application.</p>
+
+<h3 id="run-a-cluster">Run a Cluster</h3>
+
+<p>This simple hello world application is actually a distributed application.
+The message handler is automatically sharded by <code>Hello.Name</code>. Later,
+we will explain how that happens.
+For now, let&#39;s just try to run our hello world application in a cluster.</p>
+
+<p>Run the first node as you have done previously (<code>go run helloworld.go</code>).
+Wait until you see the hello messages:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">bee 1/HelloWorld/0000000000000402&gt; hello your name (5)!
+bee 1/HelloWorld/0000000000000402&gt; hello your name (6)!
+</code></pre></div>
+<p>Then, run a new node using the following command:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">go run helloworld.go -addr localhost:7678 -paddrs localhost:7677 -statepath /tmp/beehive2
+</code></pre></div>
+<p>After you connect the second node, the first node should generate the following
+output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">bee 1/HelloWorld/0000000000000402&gt; hello your name (7)!
+bee 1/HelloWorld/0000000000000402&gt; hello your name (8)!
+</code></pre></div>
+<p>Note that in the last command,
+<code>-addr</code> sets the listening address of the beehive server,
+<code>-paddrs</code> sets the address of the peers (the first node is listening on the
+default port, 7677), and
+<code>-statepath</code> sets where beehive should store its state and the dictionaries.</p>
+
+<p><strong>Note:</strong> You can reinitializing the cluster by removing both
+<code>/tmp/beehive</code> and <code>/tmp/beehive2</code>, and re-running the commands.</p>
+
+<h2 id="deep-dive">Deep Dive</h2>
+
+<h3 id="hives">Hives</h3>
+
+<p>A <strong>Hive</strong> is basically a Beehive server, representing one logical unit of
+computing (say, a physical or a virtual machine). Hives can form, join to,
+and leave a cluster. Beehive clusters are homogeneous, meaning that all
+hives in the same cluster are running the same set of applications.</p>
+
+<h3 id="applications-dictionaries-and-message-handlers">Applications, Dictionaries, and Message Handlers</h3>
+
+<p>A Beehive application is a set of asynchronous message handlers.
+Message handlers simply process async messages and store their state in
+dictionaries. A dictionary is basically a hash map.
+Behind the scenes, these dictionaries are saved to disk and are replicated.
+A message handler is composed of a <code>Rcv</code> function that actually processes
+the message and a <code>Map</code> function declaring how messages should be
+sharded/partitioned. Beehive provides a generic <code>Map</code> functions (as
+you saw in the Hello World example) and also has a
+<a href="https://github.com/kandoo/beehive/tree/master/compiler">compiler</a> that
+can generate <code>Map</code> functions based on your <code>Rcv</code> functions.
+Having said that, <code>Map</code> functions are almost always one-liners and
+are pretty easy to implement.</p>
+
+<h3 id="map-and-consistent-concurrency"><code>Map</code> and Consistent Concurrency</h3>
+
+<p>To make the distributed and concurrent version of of message handlers,
+we want to balance the load of message processing among
+multiple go-routines across multiple hives. We need to do
+this in a way that the application&#39;s behavior remains identical
+to when we use only a single, centralized go-routine. To do so,
+we need to preserve the consistency of application dictionaries.</p>
+
+<p>In other words,  we want to make sure that each
+entry (or as we call them, <strong>cell</strong>) in an application dictionary is
+always accessed on the same logical go-routine. Otherwise,
+we can&#39;t guarantee that the application behaves consistently
+when distributed over multiple hives. For example, what would happen
+to our hello world application if two different go-routines could
+read and modify the same entry concurrently?</p>
+
+<p>To that end, for each message, we need to know what are the keys used
+to process the message in the <code>Rcv</code> function of a message handler.
+We call this the <strong>mapped cells</strong> of that message. Each message
+handler, in addition to its <code>Rcv</code> function, needs to provide a
+<code>Map</code> function that maps an incoming message to <strong>cells</strong> or simply
+keys in application dictionaries. <code>Map</code> functions are usually
+very simple to implement, but you can also use Beehive&#39;s generic
+<code>RuntimeMap</code> function or the Beehive compiler to generate the
+<code>Map</code> function.</p>
+
+<h3 id="bees">Bees</h3>
+
+<p>Applications and their message handlers are passive in Beehive.
+Internally, each hive has a set of go-routines called <strong>bees</strong>
+that run the message handlers for each application.
+Each bee exclusively owns a set of cells. These cells are
+the cells that must be accessed by the same go-routine to
+preserve consistency.
+Cells are locked by bees using an internal distributed consensus
+mechanism implemented using Raft. Bees persist their cells
+if needed and, when a hive restarts, we reload all the bees.</p>
+
+<p>Moreover, for replicated applications, bees will form
+a colony of bees (itself and some other bees on other hives)
+and will consistently replicate its cells using raft.
+When a bee fails, we hand its cells and workload to other
+bees in the colony. The size of a colony is equal to the
+application&#39;s <a href="https://godoc.org/github.com/kandoo/beehive#Persistent">replication factor</a>.</p>
+
+<h3 id="life-of-a-message">Life of a Message</h3>
+
+<p>When a message is emitted on a hive, we first pass that message
+to the <code>Map</code> function of the registered message handlers for that
+type of message.
+The <code>Map</code> function returns the mapped cells of that message.
+Then, we relay the message to the bee that has any of the keys
+in the mapped cell. That bee in response calls the <code>Rcv</code>
+function of that message handler. This bee may be on the same
+hive or can be on another hive.</p>
+
+<p>If there is no such bee (this is the first message mapped to those
+cells), we elect a hive, create one bee on it, and relay the message.
+By default, we create the bee on the local hive, but applications
+can register custom
+<a href="https://godoc.org/github.com/kandoo/beehive#WithPlacement">placement methods</a>
+to change this behavior. For example, using this option, one can
+implement a random placement.</p>
+
+<h3 id="reply-messages">Reply Messages</h3>
+
+<p>So far, we have seen emitted messages but we cannot use that
+for communication between applications, say to implement
+a request response system. For example, a better way to implement
+our hello world application would be emitting a <code>Hello</code> message
+and waiting for a response that contains the count.</p>
+
+<p>In Beehive, you can reply to a message using
+<a href="https://godoc.org/github.com/kandoo/beehive#MockRcvContext.ReplyTo">ReplyTo</a>
+method. For example, we can rewrite our hello world
+application using reply messages:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">Rcvf</span><span class="p">(</span><span class="nx">msg</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Msg</span><span class="p">,</span> <span class="nx">ctx</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">RcvContext</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">hello</span> <span class="o">:=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">().(</span><span class="nx">Hello</span><span class="p">)</span>
+    <span class="nx">dict</span> <span class="o">:=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">Dict</span><span class="p">(</span><span class="s">&quot;hello_dict&quot;</span><span class="p">)</span>
+    <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">dict</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">hello</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+    <span class="nx">cnt</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">cnt</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">cnt</span><span class="o">++</span>
+    <span class="c1">// Reply to the message with the count of hellos.</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">ReplyTo</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">cnt</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">dict</span><span class="p">.</span><span class="nx">Put</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">cnt</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>To use this version, we also need to emit <code>Hello</code> messages
+and wait for the application&#39;s response. We can implement
+this using <a href="https://godoc.org/github.com/kandoo/beehive#Hive.Sync">Sync</a>:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">go</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Start</span><span class="p">()</span>
+<span class="k">defer</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Stop</span><span class="p">()</span>
+
+<span class="nx">name</span> <span class="p">=</span> <span class="s">&quot;your name&quot;</span>
+<span class="c1">// Sync sends the Hello message and waits until it receives the reply.</span>
+<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Sync</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span> <span class="nx">Hello</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">})</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="o">...</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+<span class="nx">cnt</span> <span class="o">:=</span> <span class="nx">res</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s (%d)!\n&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">cnt</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="http-handlers">HTTP Handlers</h3>
+
+<p>Beehive applications can register custom HTTP handlers, handling requests to
+URLs with the <code>/apps/APP_NAME/</code> prefix. To register a HTTP handler,
+applications can use
+<a href="https://godoc.org/github.com/kandoo/beehive#App.HandleHTTP"><code>HandleHTTP</code></a>:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="nx">app</span><span class="p">.</span><span class="nx">HandleHTTP</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="nx">httpHandler</span><span class="p">)</span>
+</code></pre></div>
+<p>Internally we use <a href="http://www.gorillatoolkit.org/pkg/mux">Gorilla mux</a>, and we
+expose the sub-router of each application. As a result, applications can match
+against regular expression, use parameters in the URL, and specify HTTP methods:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="nx">app</span><span class="p">.</span><span class="nx">HandleHTTP</span><span class="p">(</span><span class="s">&quot;/{name}&quot;</span><span class="p">,</span> <span class="nx">httpHandler</span><span class="p">).</span><span class="nx">Methods</span><span class="p">(</span><span class="s">&quot;POST&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>HTTP handlers usually communicate with the application using synchronous
+messaging. For example, we can implement a HTTP handler for our hello world
+application as follows:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">HelloHTTPHandler</span> <span class="kd">struct</span> <span class="p">{}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">HelloHTTPHandler</span><span class="p">)</span> <span class="nx">ServeHTTP</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">vars</span> <span class="o">:=</span> <span class="nx">mux</span><span class="p">.</span><span class="nx">Vars</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+    <span class="nx">name</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">vars</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+        <span class="nx">http</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;no name&quot;</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">beehive</span><span class="p">.</span><span class="nx">Sync</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span> <span class="nx">Hello</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">})</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">http</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">(),</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusInternalServerError</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;hello %s (%d)\n&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">res</span><span class="p">.(</span><span class="kt">int</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Now you can send HTTP requests to this handler using curl:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl -X POST localhost:7677/apps/hello-world/yourname
+</code></pre></div>
+<p>And you should see the following output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">hello yourname (1)
+</code></pre></div>
+<h3 id="detached-handlers">Detached Handlers</h3>
+
+<p>Sometimes you need to create go-routines that read data from network connections
+or file system and generate messages. For example, to implement a network
+listener for a custom protocol, we need to run a network listener and then
+run go-routines for each established connection. To implement such
+functionalities in Beehive, we can use
+<a href="https://godoc.org/github.com/kandoo/beehive#DetachedHandler">detached handlers</a>.
+A detached handler is different than a message handler in a sense that it is
+started in its <code>Start</code> method and only receives replies.</p>
+
+<p>The
+<a href="https://godoc.org/github.com/kandoo/beehive/#example-package--Detached">Detached Example</a>
+demonstrates how we used detached handlers to implement a text-based protocol in
+Beehive. When you run this example, you can telnet to port 6789 for sending
+names to the hello world application:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">telnet localhost 6789
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is &#39;^]&#39;.
+your name
+hello your name (1)!
+your name
+hello your name (2)!
+your name
+hello your name (3)!
+</code></pre></div>
+<h3 id="transactions">Transactions</h3>
+
+<p>By default, all applications are transactional in Beehive,
+meaning that the bee opens up a transaction for each
+call to the <code>Rcv</code> function. If the <code>Rcv</code> panics or returns an
+error the transaction is automatically aborted, and otherwise
+is committed.</p>
+
+<p>In Beehive, transactions include all the modification to the
+dictionaries and all the messages emitted in a <code>Rcv</code> function.
+That is, when a transaction is aborted, all the messages and all
+dictionary modifications are dropped.</p>
+
+<p>Transactions are by default implicit, but message handlers can
+explicitly control transactions. To open a transaction in a <code>Rcv</code>
+function you can use <code>BeginTx()</code>, <code>CommitTx()</code> and <code>AbortTx()</code>:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">Rcvf</span><span class="p">(</span><span class="nx">msg</span> <span class="nx">bh</span><span class="p">.</span><span class="nx">Msg</span><span class="p">,</span> <span class="nx">ctx</span> <span class="nx">bh</span><span class="p">.</span><span class="nx">RcvContext</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">BeginTx</span><span class="p">()</span>
+    <span class="nx">d1</span> <span class="o">:=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">Dict</span><span class="p">(</span><span class="s">&quot;d1&quot;</span><span class="p">)</span>
+    <span class="nx">d1</span><span class="p">.</span><span class="nx">Put</span><span class="p">(</span><span class="s">&quot;k&quot;</span><span class="p">,</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="mi">1</span><span class="p">})</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">Emit</span><span class="p">(</span><span class="nx">MyMsg</span><span class="p">(</span><span class="s">&quot;test1&quot;</span><span class="p">))</span>
+    <span class="c1">// Update d1/k and emit test1.</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">CommitTx</span><span class="p">()</span>
+
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">BeginTx</span><span class="p">()</span>
+    <span class="nx">d2</span> <span class="o">:=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">Dict</span><span class="p">(</span><span class="s">&quot;d2&quot;</span><span class="p">)</span>
+    <span class="nx">d2</span><span class="p">.</span><span class="nx">Put</span><span class="p">(</span><span class="s">&quot;k&quot;</span><span class="p">,</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="mi">2</span><span class="p">})</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">Emit</span><span class="p">(</span><span class="nx">MyMsg</span><span class="p">(</span><span class="s">&quot;test2&quot;</span><span class="p">))</span>
+    <span class="c1">// DO NOT update d2/k and DO NOT emit test2.</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">AbortTx</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>To disable automatic transactions for an application (say,
+for performance reasons), use the
+<a href="https://godoc.org/github.com/kandoo/beehive#NonTransactional"><code>NonTransactional</code></a>
+option.</p>
+
+<h3 id="runtime-instrumentation-and-optimization">Runtime Instrumentation and Optimization</h3>
+
+<p>Beehive is capable of automatic runtime instrumentation. It measures the
+messages exchanged between different bees and can use it to live migrate bees
+to minimize latency. You can enable instrumentation and optimization by passing
+<code>-instrument</code> command line arguments to your Beehive program. You can also
+access the instrumentation data on Beehive&#39;s web interface (by default,
+<code>http://localhost:7677/</code>).</p>
+
+<h2 id="projects-using-beehive">Projects using Beehive</h2>
+
+<ul>
+<li><a href="https://github.com/kandoo/beehive-netctrl">Beehive Distributed SDN Controller</a></li>
+<li><a href="https://github.com/kandoo/beehive/tree/master/examples/taskq">TaskQ</a></li>
+</ul>
+
+<h2 id="mailing-list">Mailing List</h2>
+
+<p>Google group: <a href="https://groups.google.com/forum/#!forum/beehive-dev">https://groups.google.com/forum/#!forum/beehive-dev</a></p>
+
+<p>Please report bugs in github, not in the group.</p>
+
+<h2 id="publications">Publications</h2>
+
+<p>Soheil Hassas Yeganeh, Yashar Ganjali,
+<a href="http://conferences.sigcomm.org/hotnets/2014/papers/hotnets-XIII-final17.pdf">Beehive: Towards a Simple Abstraction for Scalable Software-Defined Networking</a>,
+HotNets XIII, 2014.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <div class="github-fork-ribbon-wrapper left-bottom">
+		<div class="github-fork-ribbon">
+				<a href="https://github.com/kandoo">Kandoo on GitHub</a>
+		</div>
+</div>
+
+
+  </body>
+
+</html>
