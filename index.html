@@ -8,10 +8,11 @@
   <title>Kandoo</title>
   <meta name="description" content="An effort to simplify distributed programming.">
 	<meta name="keywords" context="distributed systems,openflow,SDN,go,golang">
-  <link rel="stylesheet" href="/css/main.css">
   <link rel="canonical" href="http://kandoo.github.io/">
   <link rel="alternate" type="application/rss+xml" title="Kandoo" href="http://kandoo.github.io/feed.xml" />
-
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/css/main.css">
 	<link rel="stylesheet" href="/css/gh-fork-ribbon.css" />
 	<!--[if lt IE 9]>
 		<link rel="stylesheet" href="/css/gh-fork-ribbon.ie.css" />
@@ -79,9 +80,46 @@
 
     <div class="page-content">
       <div class="wrapper">
-        <h1 id="simple-distributed-programming">Simple Distributed Programming</h1>
+        <h1 id="introduction">Introduction</h1>
 
-<p>This is a simple key-value store that can put, get, and delete keys and values.</p>
+<p><a href="/beehive">Beehive</a> is a genetic distributed programming framework that:</p>
+
+<ul>
+<li>can seamlessly <em>scale</em>.</li>
+<li>can <em>efficiently</em> handle the workload.</li>
+<li>can <em>tolerate faults</em> with no developer intervention.</li>
+<li>is as <em>simple</em> to program as a centralized system. </li>
+<li>can <em>self-optimize</em> according to the workload.</li>
+</ul>
+
+<p><center>
+<img src="/img/beehive.svg" width="40%">
+</center></p>
+
+<h3 id="learn-more"><a href="/beehive">Learn more</a></h3>
+
+<h1 id="motivation">Motivation</h1>
+
+<p>To implement a distributed application, one needs to implement common 
+boilerplates, such as seralization, placement, synchronization, and concurrency,
+in addition to the core of the application logic. These boilerplates are 
+difficult to implement, hard to get right, and often dwarf the core of the
+distributed application.</p>
+
+<p>Our goal is to hide these boilerplates to faciliate distributed programming.
+This is quite challenging, since our framework must be generic enough to 
+support a wide-range of distributed programs and efficient enough to be
+practical.</p>
+
+<p><center>
+<img src="/img/motivation.svg" width="60%">
+</center></p>
+
+<h3 id="learn-more"><a href="/beehive">Learn more</a></h3>
+
+<h1 id="example">Example</h1>
+
+<p>This is a sample key-value store that can put, get, and delete keys and values:</p>
 <div class="highlight"><pre><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">KVStore</span> <span class="kd">struct</span> <span class="p">{}</span>
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">KVStore</span><span class="p">)</span> <span class="nx">Rcv</span><span class="p">(</span><span class="nx">msg</span> <span class="nx">Msg</span><span class="p">,</span> <span class="nx">ctx</span> <span class="nx">RcvContext</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
@@ -101,10 +139,13 @@
     <span class="k">return</span> <span class="nx">errInvalid</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Simple, eh?
-It is implemented just like a centralized key-value store, but it is
-distributed in the same way that memcached shards its keyspace. You can
-implememnt such distributed application using <a href="/beehive">Beehive</a> with ease.</p>
+<p>Simple, eh?</p>
+
+<p>This application is implemented just like a centralized key-value store, yet is
+distributed in the same way that memcached shards its keyspace. It can handle
+more than 100k Puts per bucket per second with 5x replication.</p>
+
+<h3 id="learn-more"><a href="/beehive">Learn more</a></h3>
 
       </div>
     </div>
@@ -114,6 +155,17 @@ implememnt such distributed application using <a href="/beehive">Beehive</a> wit
 				<a href="https://github.com/kandoo">Kandoo on GitHub</a>
 		</div>
 </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-65205825-1', 'auto');
+	  ga('send', 'pageview');
+
+</script>
 
 
   </body>
